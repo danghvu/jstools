@@ -1,49 +1,109 @@
-// Saves options to localStorage.
-function save_options() {
-    var select = document.getElementById("color");
-    var color = select.children[select.selectedIndex].value;
-    localStorage["favorite_color"] = color;
+var bg = chrome.extension.getBackgroundPage();
+var libraries = bg.settings.def_lib;
 
-    // Update status to let user know options were saved.
-    var status = document.getElementById("status");
-    status.innerHTML = "Options Saved.";
-    setTimeout(function() {
-            status.innerHTML = "";
-            }, 750);
+function populate() {
+    bg.settings["lib"] = libraries;
 }
 
-var libraries = {
-    jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js',
-    prototype: 'https://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js',
-    dojo: 'https://ajax.googleapis.com/ajax/libs/dojo/1/dojo/dojo.xd.js',
-    mootools: 'https://ajax.googleapis.com/ajax/libs/mootools/1/mootools-yui-compressed.js',
-    crypto: 'https://www.res.vudang.com/jsconsole_crypto/crypto.js',
-};
-
 function remove_lib(e) {
-    console.log(e.data);
     $("#item_"+e.data).empty();
 }
 
-// Restores select box state to saved value from localStorage.
-function restore_options() {
-    lib = localStorage["lib"];
+function report(msg) {
+    var status = document.getElementById("status");
+    status.innerHTML = msg; 
+    setTimeout(function() {
+            status.innerHTML = "";
+    }, 1500);
+}
 
-    if (!lib) lib = libraries;
+// Restores select box state to saved value from localStorage.
+function restore_options(displaylib) {
+
+    if (!displaylib) {
+        lib = localStorage["lib"];
+        if (!lib) lib = libraries;
+        else lib = JSON.parse(localStorage["lib"]);
+    } else 
+        lib = displaylib;
     
     var options = $("#lib");
+    options.empty();
 
     for (var key in lib){
         options.append("<div id='item_"+key+"'></div>");
         var item = $("#item_"+key);
-        item.append("<label for='"+key+"'>"+key+"</label><input id='"+key+"' name='"+key+"'type='text' value='"+ lib[key] +"' size='100' />");
+        item.append("<label for='"+key+"'>"+key+"</label><input id='"+key+"' name='"+key+"'type='text' value='"+ lib[key] +"' size=100 />");
         item.append("<button id='remove_"+key+"'> Remove </botton>");
         $("#remove_"+key).click( key, remove_lib );
     }
 }
 
+// Saves options to localStorage.
+function save_options() {
+
+    var settings = {};
+
+    $("[id^=item_]").each( function() {
+        var input = $(this).find("input");
+        if (input.length == 0) return;
+        else input = input[0];
+
+        settings[input.id] = input.value;
+    });
+
+    localStorage["lib"] = JSON.stringify( settings );
+    report("Options Saved");
+    populate();
+}
+
+function isUrl(value) {
+    //simple check TODO: more comprehensive
+    return (value.substring(0,4) == "http");
+}
+
+function insert_lib() {
+    var current = JSON.parse(localStorage["lib"]);
+
+    var key = $("#new_key");
+    if (key.length == 0 || !key.val() || key.val().length == 0) {
+        report("Error: Empty or Incorrect value for key");
+        return;
+    }
+    var val = $("#new_val");
+    if (val.length == 0 || !val.val() || val.val().length == 0 || !isUrl(val.val()) )  {
+        report("Error: Empty or Incorrect value for url");
+        return;
+    }
+
+    current[key.val()] = val.val();
+
+    localStorage["lib"] = JSON.stringify(current);
+    restore_options();
+    report("Option Saved");
+    populate();
+}
+
+function res_default() {
+    restore_options(libraries);
+}
+
+function request_handler(request, sender, sendResponse) {
+    switch (request.query) {
+        case "load_options":
+            var opt = JSON.parse(localStorage["lib"]);
+            sendResponse(opt);
+        default:
+            console.log("Invalid request", request, sender);
+    }
+}
+
+
 $(function() {
     restore_options();
 
     $("#save").click( save_options );
+    $("#restore").click( res_default );
+    $("#new_button").click( insert_lib ); 
+
 });

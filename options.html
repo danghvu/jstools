@@ -5,11 +5,11 @@
 <script src="options.js"></script>
 
 <style>
-label{
-    width:150px;
-    display:block;
-    float:left;
-}
+    label{
+        width:150px;
+        display:block;
+        float:left;
+    }
 </style>
 <body>
 
@@ -17,8 +17,15 @@ label{
 <div id="lib">
 </div>
 
-<br>
+<br/>
 <button id="save">Save</button>
+<button id="restore">Restore Default</button>
+<div id="new">
+<span>Insert New Library:</span><br/>
+<input id="new_key" type="text" placeholder="Name" size=10 ><input id="new_val" type="text" placeholder="URL" size=100 /><br/>
+<button id="new_button">Insert</button>
+</div>
+<br/>
 <span id="status"> </span>
 </body>
 </html>

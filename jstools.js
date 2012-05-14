@@ -50,6 +50,5 @@ chrome.extension.onRequest.addListener(
 );
 
 load_js("jquery");
-load_js("crypto");
 
 });
