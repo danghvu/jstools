@@ -4,7 +4,7 @@ var libraries = {
     prototype: 'https://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js',
     dojo: 'https://ajax.googleapis.com/ajax/libs/dojo/1/dojo/dojo.xd.js',
     mootools: 'https://ajax.googleapis.com/ajax/libs/mootools/1/mootools-yui-compressed.js',
-    datajs: 'https://datejs.googlecode.com/svn/trunk/build/date.js',
+    datejs: 'https://datejs.googlecode.com/svn/trunk/build/date.js',
 };
 
 var settings = {
@@ -30,8 +30,12 @@ settings.save = function() {
 }
 
 settings.load = function() {
-    this._checked = JSON.parse(localStorage["load_lib"]);
-    this._lib = JSON.parse(localStorage["lib"]);
+    if (!localStorage["load_lib"])
+        this._checked = {};
+    else this._checked = JSON.parse(localStorage["load_lib"]);
+    if (!localStorage["lib"])
+        this._lib = settings.def_lib;
+    else this._lib = JSON.parse(localStorage["lib"]);
 }
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {

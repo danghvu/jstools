@@ -1,6 +1,6 @@
 {
   "name": "JsTools",
-  "version": "1.0",
+  "version": "1.0.2",
   "manifest_version": 2,
   "description": "Easy access to many useful Javascript libraries in javascript console.",
   "icons": {
@@ -14,8 +14,7 @@
   },
   "options_page": "options.html",
   "permissions": [
-    "tabs",
-    "*://*/*"
+    "tabs"
   ],
   "background": {
     "page": "bg.html"
