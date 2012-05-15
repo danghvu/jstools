@@ -4,12 +4,12 @@
   "manifest_version": 2,
   "description": "Easy access to many useful Javascript libraries in javascript console.",
   "icons": {
-      "16":"icon.ico",
-      "48":"icon.ico",
-      "128":"icon.ico"
+      "16":"icon.png",
+      "48":"icon.png",
+      "128":"icon.png"
   },
   "browser_action": {
-    "default_icon": "icon.ico",
+    "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
   "options_page": "options.html",
