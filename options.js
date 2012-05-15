@@ -9,12 +9,13 @@ function remove_lib(e) {
     $("#item_"+e.data).empty();
 }
 
-function report(msg) {
-    var status = document.getElementById("status");
-    status.innerHTML = msg; 
-    setTimeout(function() {
-            status.innerHTML = "";
-    }, 1500);
+function report(msg, class_name) {
+    var status = $("#status");
+    status.html(msg); status.css("display", "inline");
+    if (class_name) {
+        status.attr("class", class_name);
+    }
+    setTimeout( function() {status.fadeOut('slow');}, 3000);
 }
 
 // Restores select box state to saved value from localStorage.
@@ -53,7 +54,7 @@ function save_options() {
     });
 
     localStorage["lib"] = JSON.stringify( settings );
-    report("Options Saved");
+    report("Options Saved", "green");
     populate();
 }
 
@@ -67,12 +68,12 @@ function insert_lib() {
 
     var key = $("#new_key");
     if (key.length == 0 || !key.val() || key.val().length == 0) {
-        report("Error: Empty or Incorrect value for key");
+        report("Error: Empty or Incorrect value for key", "red");
         return;
     }
     var val = $("#new_val");
     if (val.length == 0 || !val.val() || val.val().length == 0 || !isUrl(val.val()) )  {
-        report("Error: Empty or Incorrect value for url");
+        report("Error: Empty or Incorrect value for url", "red");
         return;
     }
 
@@ -80,7 +81,7 @@ function insert_lib() {
 
     localStorage["lib"] = JSON.stringify(current);
     restore_options();
-    report("Option Saved");
+    report("Option Saved", "green");
     populate();
 }
 

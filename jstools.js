@@ -35,11 +35,11 @@ chrome.extension.onRequest.addListener(
         switch( request.query ) {
             case "load_js":
                 load_js( request.data.url, request.data.id);
-                console.log("loadjs", request);
+          //      console.log("loadjs", request);
                 break;
             case "unload_js":
                 unload_js(request.data.id); 
-                console.log("unloadjs", request);
+          //      console.log("unloadjs", request);
                 break;
             default:
                 console.log("Invalid request", request, sender);

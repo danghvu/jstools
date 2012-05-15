@@ -1,23 +1,14 @@
-chrome.tabs.onActivated.addListener(function(info) {
-    chrome.tabs.sendRequest(info.tabId, {req:'settab', tabid:info.tabId}, function(response) {
-    });
-});
-
-if (localStorage.filter == "null"){
-    localStorage.filter = ".+";
-}
-
-var DEBUG = true;
 
 var libraries = {
     jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js',
     prototype: 'https://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js',
     dojo: 'https://ajax.googleapis.com/ajax/libs/dojo/1/dojo/dojo.xd.js',
     mootools: 'https://ajax.googleapis.com/ajax/libs/mootools/1/mootools-yui-compressed.js',
-    crypto: 'http://www.res.vudang.com/jsconsole_crypto/crypto.js',
+    datajs: 'https://datejs.googlecode.com/svn/trunk/build/date.js',
 };
 
 var settings = {
+    get def_lib() { return libraries; },
     get lib() {
         if (!this._lib)
             this._lib = libraries;
@@ -44,7 +35,6 @@ settings.load = function() {
 }
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-    if (DEBUG) console.debug(request.query);
     settings.load();
 
     switch( request.query ) {
