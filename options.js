@@ -58,26 +58,38 @@ function save_options() {
     populate();
 }
 
-function isUrl(value) {
+function is_url(value) {
     //simple check TODO: more comprehensive
     return (value.substring(0,4) == "http");
 }
 
+function remove_html(v) {
+    return String(v)
+    .replace(/&/g, '_')
+    .replace(/"/g, '_')
+    .replace(/'/g, '_')
+    .replace(/</g, '_')
+    .replace(/>/g, '_');
+}
+
 function insert_lib() {
-    var current = JSON.parse(localStorage["lib"]);
+    if (localStorage["lib"])
+        var current = JSON.parse(localStorage["lib"]);
+    else
+        var current = libraries;
 
     var key = $("#new_key");
-    if (key.length == 0 || !key.val() || key.val().length == 0) {
+    if (key.length == 0 || !key.val() || key.val().length == 0 || !key.val().match(/^[a-zA-z0-9]+$/)) {
         report("Error: Empty or Incorrect value for key", "red");
         return;
     }
     var val = $("#new_val");
-    if (val.length == 0 || !val.val() || val.val().length == 0 || !isUrl(val.val()) )  {
+    if (val.length == 0 || !val.val() || val.val().length == 0 || !is_url(val.val()) )  {
         report("Error: Empty or Incorrect value for url", "red");
         return;
     }
 
-    current[key.val()] = val.val();
+    current[key.val()] = encodeURI(val.val());
 
     localStorage["lib"] = JSON.stringify(current);
     restore_options();

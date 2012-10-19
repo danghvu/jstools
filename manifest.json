@@ -2,19 +2,12 @@
   "name": "JsTools",
   "version": "1.0.2",
   "manifest_version": 2,
-<<<<<<< HEAD
-  "description": "Easy access to many useful javascript library",
-  "icons": {"16":"icon.png",
-            "48":"icon.png",
-            "128":"icon.png"},
-=======
   "description": "Easy access to many useful Javascript libraries in javascript console.",
   "icons": {
       "16":"icon.png",
       "48":"icon.png",
       "128":"icon.png"
   },
->>>>>>> b10bb7baecf750675b72dda6b39228c36a67105f
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
@@ -24,11 +17,7 @@
     "tabs"
   ],
   "background": {
-<<<<<<< HEAD
     "scripts": ["bg.js"]
-=======
-    "page": "bg.html"
->>>>>>> b10bb7baecf750675b72dda6b39228c36a67105f
   },
   "content_scripts": [
     {
