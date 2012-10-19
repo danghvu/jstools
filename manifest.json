@@ -3,6 +3,9 @@
   "version": "1.0",
   "manifest_version": 2,
   "description": "Easy access to many useful javascript library",
+  "icons": {"16":"icon.png",
+            "48":"icon.png",
+            "128":"icon.png"},
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
@@ -13,7 +16,6 @@
     "*://*/*"
   ],
   "background": {
-    //"page": "bg.html"
     "scripts": ["bg.js"]
   },
   "content_scripts": [
