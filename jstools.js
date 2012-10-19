@@ -1,54 +1,50 @@
 $(function() {	
 
-var libraries = {
-        jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js',
-        prototype: 'https://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js',
-        dojo: 'https://ajax.googleapis.com/ajax/libs/dojo/1/dojo/dojo.xd.js',
-        mootools: 'https://ajax.googleapis.com/ajax/libs/mootools/1/mootools-yui-compressed.js',
-        crypto: 'https://www.res.vudang.com/jsconsole_crypto/crypto.js',
-};
-
 create_placeholder = function() {
     $("body").append("<div id='jstools_libraries'> </div>");
 };
 
-load_js = function(jsid) {
+load_js = function(url, jsid) {
     var ph = $("#jstools_libraries");
     if (ph.length == 0) {
         create_placeholder();
         ph = $("#jstools_libraries");
     }
 
-    ph.append("<scri"+"pt src='"+libraries[jsid]+"'></sc"+"ript>");
-    //ph.append(url);
-    
+    ph.append("<scri"+"pt src='"+url+"' id='"+jsid+"'></sc"+"ript>");
 };
 
 unload_js = function(jsid) {
+    $("id="+jsid).remove();
 };
 
-refresh_js = function(list_jsid) {
+chrome.extension.sendRequest({query:"load_settings"}, function (response) {
+    lib = response.lib;
+    checked = response.load_lib;
 
-    for (var i=0; i<list_jsid.length; i++ ){
-        load_js(list_jsid[i]);
+    for (var key in lib) {
+        if (checked[key] === true) {
+            load_js(lib[key], key);
+        }
     }
-
-};
+});
 
 chrome.extension.onRequest.addListener(
-    function get(request, sender, sendResponse) {
-        if (request.cmd == 'refresh') {
-            refresh_js( request.data.list_jsid );
-        }
-        if (request.cmd == 'load'){
-            load_js( request.data.jsid );
-        }
-        if (request.cmd == 'unload') {
-            unload_js( request.data.jsid ); 
+    function (request, sender, sendResponse) {
+//        console.log(request);
+        switch( request.query ) {
+            case "load_js":
+                load_js( request.data.url, request.data.id);
+          //      console.log("loadjs", request);
+                break;
+            case "unload_js":
+                unload_js(request.data.id); 
+          //      console.log("unloadjs", request);
+                break;
+            default:
+                console.log("Invalid request", request, sender);
         }
     }
 );
-
-load_js("jquery");
 
 });

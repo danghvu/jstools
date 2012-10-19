@@ -1,62 +1,57 @@
-chrome.tabs.onActivated.addListener(function(info) {
-    chrome.tabs.sendRequest(info.tabId, {req:'settab', tabid:info.tabId}, function(response) {
-    });
-});
-
-if (localStorage.filter == "null"){
-    localStorage.filter = ".+";
-}
-
-var DEBUG = true;
 
 var libraries = {
     jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js',
     prototype: 'https://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js',
     dojo: 'https://ajax.googleapis.com/ajax/libs/dojo/1/dojo/dojo.xd.js',
     mootools: 'https://ajax.googleapis.com/ajax/libs/mootools/1/mootools-yui-compressed.js',
-    crypto: 'http://www.res.vudang.com/jsconsole_crypto/crypto.js',
+    datejs: 'https://datejs.googlecode.com/svn/trunk/build/date.js',
 };
 
-function init_lib() {
-    localStorage["lib"] = JSON.stringify(libraries);
-    var load_lib = libraries;
-    for (key in load_lib) 
-        load_lib[key] = false;
-    localStorage["load_lib"] = JSON.stringify(load_lib);
-}
-
 var settings = {
-    get def_lib() {
-        return libraries;
-    },
+    get def_lib() { return libraries; },
     get lib() {
-        if (!localStorage["lib"]) 
-            init_lib();
-        return localStorage["lib"];
+        if (!this._lib)
+            this._lib = libraries;
+        return this._lib;
     },
     set lib(val) {
-        localStorage["lib"] = val;
+        lib = val;
     },
-    set load_lib(lib) {
-        if (localStorage["load_lib"])         
-            var check_lib = JSON.parse(localStorage["load_lib"]);
-       
-        check_lib[lib] = true;
-        localStorage["load_lib"] = JSON.stringify(check_lib);
+    get checked() {
+        if (!this._checked)
+            this._checked = {};
+        return this._checked;
     },
-    get load_lib() {
-        if (!localStorage["load_lib"])
-            init_lib();
-        return localStorage["load_lib"];
-    }
+}
+
+settings.save = function() {
+    localStorage["load_lib"] = JSON.stringify(this._checked);
+    localStorage["lib"] = JSON.stringify(this._lib);
+}
+
+settings.load = function() {
+    if (!localStorage["load_lib"])
+        this._checked = {};
+    else this._checked = JSON.parse(localStorage["load_lib"]);
+    if (!localStorage["lib"])
+        this._lib = settings.def_lib;
+    else this._lib = JSON.parse(localStorage["lib"]);
 }
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-    if (DEBUG) console.debug(request.query);
+    settings.load();
 
     switch( request.query ) {
         case "load_settings": 
-            sendResponse({lib: settings.lib, load_lib:settings.load_lib});
+            sendResponse({lib: settings.lib, load_lib:settings.checked});
+            break;
+        case "settings_loadlib":
+            settings._checked[request.data.id] = true;
+            settings.save();
+            break;
+        case "settings_unloadlib":
+            settings._checked[request.data.id] = false;
+            settings.save();
             break;
         default:
             console.log("Invalid Response", request, sender);
