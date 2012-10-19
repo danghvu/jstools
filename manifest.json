@@ -1,6 +1,6 @@
 {
   "name": "JsTools",
-  "version": "1.0.2",
+  "version": "1.0.3.1",
   "manifest_version": 2,
   "description": "Easy access to many useful Javascript libraries in javascript console.",
   "icons": {

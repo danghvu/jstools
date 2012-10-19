@@ -1,5 +1,14 @@
 var bg = chrome.extension.getBackgroundPage();
-var libraries = bg.settings.def_lib;
+
+function copy_default_lib() {
+    var a = new Object();
+    for (key in bg.settings.def_lib) {
+        a[key] = bg.settings.def_lib[key];
+    }
+    return a;
+}
+
+var libraries = copy_default_lib();
 
 function populate() {
     bg.settings["lib"] = libraries;
@@ -20,14 +29,15 @@ function report(msg, class_name) {
 
 // Restores select box state to saved value from localStorage.
 function restore_options(displaylib) {
+    var lib = displaylib;
 
-    if (!displaylib) {
-        lib = localStorage["lib"];
-        if (!lib) lib = libraries;
-        else lib = JSON.parse(localStorage["lib"]);
-    } else 
-        lib = displaylib;
-    
+    if (!lib) {
+        if (localStorage["lib"])
+            lib = JSON.parse(localStorage["lib"]);
+        else
+            lib = libraries;
+    }
+
     var options = $("#lib");
     options.empty();
 
@@ -75,8 +85,9 @@ function remove_html(v) {
 function insert_lib() {
     if (localStorage["lib"])
         var current = JSON.parse(localStorage["lib"]);
-    else
+    else {
         var current = libraries;
+    }
 
     var key = $("#new_key");
     if (key.length == 0 || !key.val() || key.val().length == 0 || !key.val().match(/^[a-zA-z0-9]+$/)) {
@@ -98,7 +109,7 @@ function insert_lib() {
 }
 
 function res_default() {
-    restore_options(libraries);
+    restore_options(bg.settings.def_lib);
 }
 
 function request_handler(request, sender, sendResponse) {
